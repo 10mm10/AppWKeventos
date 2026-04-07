@@ -142,7 +142,8 @@ export const styles = StyleSheet.create({
     borderTopColor: '#e5e7eb',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom:50,
   },
   totalLabel: {
     fontSize: 14,
