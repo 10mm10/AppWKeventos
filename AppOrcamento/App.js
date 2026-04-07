@@ -14,12 +14,13 @@ import { styles } from './src/styles/styles';
 import { Asset } from 'expo-asset';
 
 export default function App() {
-  const logoEmpresa = Asset.fromModule(require('./assets/logo.jpeg')).uri;
+  const logoEmpresa = Asset.fromModule(require('./assets/logo.png')).uri;
 
   const [cliente, setCliente] = useState('');
   const [evento, setEvento] = useState('');
   const [dataEvento, setDataEvento] = useState('');
   const [horaEvento, setHoraEvento] = useState('');
+  const [desconto, setDesconto] = useState(''); // NOVO ESTADO PARA DESCONTO
   const [itens, setItens] = useState([]);
 
   const [modalVisivel, setModalVisivel] = useState(false);
@@ -28,9 +29,13 @@ export default function App() {
   const [custoItem, setCustoItem] = useState('');
   const [vendaItem, setVendaItem] = useState('');
 
-  const totalVenda = itens.reduce((acc, item) => acc + item.venda, 0);
+  // CÁLCULOS COM DESCONTO
+  const somaItensVenda = itens.reduce((acc, item) => acc + item.venda, 0);
   const totalCusto = itens.reduce((acc, item) => acc + item.custo, 0);
-  const lucroTotal = totalVenda - totalCusto;
+  const valorDesconto = parseFloat(desconto.replace(',', '.')) || 0;
+  
+  const totalFinalVenda = somaItensVenda - valorDesconto;
+  const lucroTotal = totalFinalVenda - totalCusto;
 
   const formatarData = (text) => {
     let cleaned = text.replace(/\D/g, '');
@@ -75,7 +80,7 @@ export default function App() {
         <div class="conteudo-principal">
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
             <h1 style="color: #2563eb; margin: 0;">WK Eventos - Relatório Interno</h1>
-            <img src="${logoEmpresa}" style="height: 60px;" />
+            <img src="${logoEmpresa}" style="height: 200px;" />
           </div>
           <p><strong>Cliente:</strong> ${cliente || '---'}</p>
           <p><strong>Evento:</strong> ${evento || '---'}</p>
@@ -85,8 +90,8 @@ export default function App() {
               <tr style="background: #2563eb; color: white;">
                 <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Item</th>
                 <th style="padding: 12px; border: 1px solid #ddd;">Custo</th>
-                <th style="padding: 12px; border: 1px solid #ddd;">Venda</th>
-                <th style="padding: 12px; border: 1px solid #ddd;">Lucro</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Venda Bruta</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Lucro Unit.</th>
               </tr>
             </thead>
             <tbody>
@@ -102,8 +107,10 @@ export default function App() {
           </table>
         </div>
         <div style="margin-top: 20px; padding: 20px; background: #f1f5f9; border-radius: 10px;">
-          <p style="font-size: 18px; margin: 5px 0;"><strong>Total em Vendas:</strong> R$ ${totalVenda.toFixed(2)}</p>
-          <p style="font-size: 18px; margin: 5px 0; color: #2563eb;"><strong>Margem de Lucro:</strong> R$ ${lucroTotal.toFixed(2)}</p>
+          <p style="margin: 5px 0;">Subtotal: R$ ${somaItensVenda.toFixed(2)}</p>
+          <p style="margin: 5px 0; color: #ef4444;">Desconto Aplicado: - R$ ${valorDesconto.toFixed(2)}</p>
+          <p style="font-size: 18px; margin: 5px 0;"><strong>Total Final (Venda):</strong> R$ ${totalFinalVenda.toFixed(2)}</p>
+          <p style="font-size: 18px; margin: 5px 0; color: #2563eb;"><strong>Meu Lucro Líquido:</strong> R$ ${lucroTotal.toFixed(2)}</p>
         </div>
       </body>
     </html>
@@ -114,9 +121,9 @@ export default function App() {
       <head>${cssFolhaUnica}</head>
       <body style="font-family: sans-serif; padding: 40px; color: #334155;">
         <div class="conteudo-principal">
-          <div style="text-align: center; border-bottom: 4px solid #2563eb; padding-bottom: 20px;">
-            <img src="${logoEmpresa}" style="height: 80px; margin-bottom: 10px;" />
-            <h1 style="color: #2563eb; margin: 0; letter-spacing: 2px;">WK Eventos</h1>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
+            <h1 style="color: #2563eb; margin: 10px; align-items: center;">WK Eventos </h1>
+            <img src="${logoEmpresa}" style="height: 200px;" />
           </div>
           <div style="margin-top: 40px;">
             <p style="font-size: 18px;"><strong>Prezado(a) ${cliente},</strong></p>
@@ -133,12 +140,16 @@ export default function App() {
             `).join('')}
           </div>
         </div>
-        <div style="margin-top: 30px; text-align: right; padding: 30px; background: #2563eb; color: white; border-radius: 15px;">
-          <span style="font-size: 18px; opacity: 0.9;">Investimento Total do evento:</span>
-          <h1 style="margin: 5px 0; font-size: 36px;">R$ ${totalVenda.toFixed(2)}</h1>
+        
+        <div style="margin-top: 30px; text-align: right; padding: 25px; background: #2563eb; color: white; border-radius: 15px;">
+          <p style="margin: 0; font-size: 14px; opacity: 0.8;">Valor Total do evento: R$ ${somaItensVenda.toFixed(2)}</p>
+          ${valorDesconto > 0 ? `<p style="margin: 5px 0; font-size: 16px; color: #4ade80; font-weight: bold;">Desconto Especial: - R$ ${valorDesconto.toFixed(2)}</p>` : ''}
+          <span style="font-size: 18px; opacity: 0.9;">Investimento Final do evento:</span>
+          <h1 style="margin: 5px 0; font-size: 36px;">R$ ${totalFinalVenda.toFixed(2)}</h1>
         </div>
-        <p style="text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8;">WK Eventos | Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
-        <p style="text-align: center; margin-top: 5px; font-size: 12px; color: #94a3b8;">Proposta valida por 30 dias.</p>
+
+        <p style="text-align: center; margin-top: 40px; font-size: 20px; color: #94a3b8;">WK Eventos | Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+        <p style="text-align: center; margin-top: 5px; font-size: 20px; color: #94a3b8;">Proposta valida por 30 dias.</p>
       </body>
     </html>
   `;
@@ -239,6 +250,18 @@ export default function App() {
           <Text style={styles.buttonText}>+ Adicionar Item</Text>
         </TouchableOpacity>
 
+        {/* CAMPO DE DESCONTO NO FORMULÁRIO */}
+        <View style={{ marginTop: 15 }}>
+          <Text style={styles.label}>Desconto Especial (R$)</Text>
+          <TextInput 
+            style={[styles.input, { color: '#ef4444', fontWeight: 'bold'}]} 
+            placeholder="0,00" 
+            value={desconto} 
+            onChangeText={setDesconto} 
+            keyboardType="numeric"
+          />
+        </View>
+
         {itens.length > 0 && (
           <View style={{ marginTop: 25, paddingBottom: 50 }}>
             <Text style={{ fontWeight: 'bold', color: '#475569' }}>RELATÓRIO INTERNO (WK):</Text>
@@ -264,7 +287,7 @@ export default function App() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <View><Text style={styles.totalLabel}>Total Cliente</Text><Text style={styles.totalValue}>R$ {totalVenda.toFixed(2)}</Text></View>
+        <View><Text style={styles.totalLabel}>Total Cliente</Text><Text style={styles.totalValue}>R$ {totalFinalVenda.toFixed(2)}</Text></View>
         <View style={{ alignItems: 'flex-end' }}><Text style={styles.totalLabel}>Meu Lucro</Text><Text style={{ color: '#2563eb', fontWeight: 'bold', fontSize: 18 }}>R$ {lucroTotal.toFixed(2)}</Text></View>
       </View>
 
