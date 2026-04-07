@@ -161,7 +161,7 @@ export default function App() {
                   <Text style={{ color: '#2563eb', fontWeight: 'bold' }}>EDITAR</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setItens(itens.filter(i => i.id !== item.id))}>
-                  <Text style={{ color: '#ef4444', fontWeight: 'bold' }}>X</Text>
+                  <Text style={{ color: '#ef4444', fontWeight: 'bold' }}>EXCLUIR</Text>
                 </TouchableOpacity>
               </View>
             </View>
