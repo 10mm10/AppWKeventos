@@ -1,19 +1,26 @@
 import { StyleSheet } from 'react-native';
 
+// --- PALETA DE CORES WK EVENTOS (Extraída da Logo) ---
+const WK_VERMELHO = '#8B221B'; // Vermelho da faixa/laço
+const WK_AMARELO = '#EBD84B';  // Amarelo do escudo
+const WK_CHUMBO = '#211E1D';   // Preto/Chumbo da borda
+const WK_FUNDO = '#F5F5F5';    // Cinza claro para o fundo
+const WK_BRANCO = '#FFFFFF';   // Branco puro para cards/modal
+
 export const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#f5f5f5' 
+    backgroundColor: WK_FUNDO, 
   },
   header: { 
     paddingTop: 60, 
     paddingBottom: 30, 
-    backgroundColor: '#2563eb', 
+    backgroundColor: WK_VERMELHO, // Atualizado para o Vermelho WK
     alignItems: 'center',
-    elevation: 4, // Sombra no Android
+    elevation: 4, 
   },
   title: { 
-    color: '#fff', 
+    color: WK_BRANCO, 
     fontSize: 22, 
     fontWeight: 'bold' 
   },
@@ -24,40 +31,46 @@ export const styles = StyleSheet.create({
     fontSize: 16, 
     fontWeight: '600', 
     marginBottom: 8, 
-    color: '#374151' 
+    color: '#374151', // Mantido para boa legibilidade
   },
   input: { 
-    backgroundColor: '#fff', 
+    backgroundColor: WK_BRANCO, 
     padding: 12, 
     borderRadius: 8, 
     borderWidth: 1, 
-    borderColor: '#d1d5db', 
+    borderColor: '#d1d5db', // Mantido o cinza discreto da borda
     marginBottom: 20,
-    fontSize: 16
+    fontSize: 16,
+    color: WK_CHUMBO, // Texto digitado na cor Chumbo
   },
   button: { 
-    backgroundColor: '#059669', 
+    backgroundColor: WK_VERMELHO, // Botão principal em Vermelho WK
     padding: 16, 
     borderRadius: 8, 
     alignItems: 'center',
-    marginTop: 10
+    marginTop: 10,
+    // Sombra sutil com a cor de contraste
+    elevation: 2,
+    shadowColor: WK_CHUMBO,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
   buttonText: { 
-    color: '#fff', 
+    color: WK_BRANCO, 
     fontWeight: 'bold', 
     fontSize: 16 
   },
-  // ... (mantenha o que já existia e adicione estes abaixo)
   itemCard: {
-    backgroundColor: '#fff',
+    backgroundColor: WK_BRANCO,
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
     borderLeftWidth: 5,
-    borderLeftColor: '#059669',
-    // Sombra para dar profundidade
+    borderLeftColor: WK_AMARELO, // Badges e bordas de destaque em Amarelo WK
+    // Sombra mantida
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: WK_CHUMBO,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
@@ -65,33 +78,32 @@ export const styles = StyleSheet.create({
   itemTextNome: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: WK_CHUMBO, // Texto de título em Chumbo WK
   },
   itemTextValores: {
     fontSize: 14,
-    color: '#4b5563',
+    color: '#4b5563', // Mantido
     marginTop: 4,
   },
   custoBadge: {
-    color: '#9ca3af',
+    color: '#9ca3af', // Mantido
     fontSize: 12,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#374151',
+    color: WK_CHUMBO, // Títulos de seção em Chumbo WK
     marginTop: 20,
     marginBottom: 10,
   },
-  // ... (mantenha os anteriores e adicione estes)
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fundo escurecido
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: WK_BRANCO,
     width: '90%',
     padding: 20,
     borderRadius: 15,
@@ -102,7 +114,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
-    color: '#2563eb',
+    color: WK_VERMELHO, // Título do Modal em Vermelho WK
   },
   buttonGroup: {
     flexDirection: 'row',
@@ -110,23 +122,22 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonCancel: {
-    backgroundColor: '#ef4444',
+    backgroundColor: '#ef4444', // Mantido o vermelho de erro padrão
     padding: 15,
     borderRadius: 8,
     flex: 0.48,
     alignItems: 'center',
   },
   buttonSave: {
-    backgroundColor: '#059669',
+    backgroundColor: WK_VERMELHO, // Botão de salvar em Vermelho WK
     padding: 15,
     borderRadius: 8,
     flex: 0.48,
     alignItems: 'center',
   },
-  // ... (mantenha os anteriores e adicione estes)
   footer: {
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: WK_BRANCO,
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
     flexDirection: 'row',
@@ -140,16 +151,15 @@ export const styles = StyleSheet.create({
   totalValue: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#059669',
+    color: WK_VERMELHO, // Total final em Vermelho WK para destaque
   },
   buttonPDF: {
-    backgroundColor: '#2563eb',
+    backgroundColor: WK_VERMELHO, // Botões de PDF em Vermelho WK
     padding: 15,
     borderRadius: 8,
     marginTop: 10,
     alignItems: 'center',
   },
-  // ... (mantenha os anteriores e adicione estes)
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -160,12 +170,11 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
   editBtn: {
-    color: '#2563eb',
+    color: '#2563eb', // Mantido o azul padrão de link para edição
     fontWeight: 'bold',
   },
   deleteBtn: {
-    color: '#ef4444',
+    color: '#ef4444', // Mantido o vermelho padrão para exclusão
     fontWeight: 'bold',
   }
-
 });

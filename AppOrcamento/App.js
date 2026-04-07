@@ -76,10 +76,10 @@ export default function App() {
   const obterHtmlEmpresa = () => `
     <html>
       <head>${cssFolhaUnica}</head>
-      <body style="font-family: sans-serif; padding: 20px; color: #1e293b;">
+      <body style="font-family: sans-serif; padding: 20px; color: #211E1D;">
         <div class="conteudo-principal">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-            <h1 style="color: #2563eb; margin: 0;">WK Eventos - Relatório Interno</h1>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8B221B; padding-bottom: 10px;">
+            <h1 style="color: #8B221B; margin: 0;">WK Eventos - Relatório Interno</h1>
             <img src="${logoEmpresa}" style="height: 200px;" />
           </div>
           <p><strong>Cliente:</strong> ${cliente || '---'}</p>
@@ -87,7 +87,7 @@ export default function App() {
           <p><strong>Data:</strong> ${dataEvento || '---'} às ${horaEvento || '---'}</p>
           <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
             <thead>
-              <tr style="background: #2563eb; color: white;">
+              <tr style="background: #8B221B; color: white;">
                 <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Item</th>
                 <th style="padding: 12px; border: 1px solid #ddd;">Custo</th>
                 <th style="padding: 12px; border: 1px solid #ddd;">Venda Bruta</th>
@@ -96,7 +96,7 @@ export default function App() {
             </thead>
             <tbody>
               ${itens.map((item, index) => `
-                <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+                <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#fdfaf9'};">
                   <td style="padding: 10px; border: 1px solid #ddd;">${item.nome}</td>
                   <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${item.custo.toFixed(2)}</td>
                   <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${item.venda.toFixed(2)}</td>
@@ -110,40 +110,40 @@ export default function App() {
           <p style="margin: 5px 0;">Subtotal: R$ ${somaItensVenda.toFixed(2)}</p>
           <p style="margin: 5px 0; color: #ef4444;">Desconto Aplicado: - R$ ${valorDesconto.toFixed(2)}</p>
           <p style="font-size: 18px; margin: 5px 0;"><strong>Total Final (Venda):</strong> R$ ${totalFinalVenda.toFixed(2)}</p>
-          <p style="font-size: 18px; margin: 5px 0; color: #2563eb;"><strong>Meu Lucro Líquido:</strong> R$ ${lucroTotal.toFixed(2)}</p>
+          <p style="font-size: 18px; margin: 5px 0; color: #8B221B;"><strong>Meu Lucro Líquido:</strong> R$ ${lucroTotal.toFixed(2)}</p>
         </div>
       </body>
     </html>
   `;
 
-  const obterHtmlCliente = () => `
+const obterHtmlCliente = () => `
     <html>
       <head>${cssFolhaUnica}</head>
       <body style="font-family: sans-serif; padding: 40px; color: #334155;">
         <div class="conteudo-principal">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-            <h1 style="color: #2563eb; margin: 10px; align-items: center;">WK Eventos </h1>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8B221B; padding-bottom: 10px;">
+            <h1 style="color: #8B221B; margin: 10px; align-items: center;">WK Eventos</h1>
             <img src="${logoEmpresa}" style="height: 200px;" />
           </div>
           <div style="margin-top: 40px;">
-            <p style="font-size: 18px;"><strong>Prezado(a) ${cliente},</strong></p>
+            <p style="font-size: 20px;"><strong>Prezado(a) ${cliente},</strong></p>
             <p>Abaixo seguem os detalhes da proposta para o evento: <strong>${evento}</strong></p>
             <p>Data prevista: <strong>${dataEvento}</strong> às <strong>${horaEvento}</strong></p>
           </div>
-          <div style="background: #f8fafc; padding: 15px; font-weight: bold; border: 1px solid #e2e8f0; color: #2563eb;">Serviços e Equipamentos:</div>
+          <div style="background: #fdfaf9; padding: 15px; font-weight: bold; border: 1px solid #e2e8f0; color: #8B221B;">Serviços e Equipamentos:</div>
           <div style="border: 1px solid #e2e8f0; border-top: none; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
             ${itens.map(item => `
               <div style="display: flex; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
-                <span style="color: #059669; font-size: 18px; margin-right: 10px;">✔</span>
+                <span style="color: #EBD84B; font-size: 18px; margin-right: 10px;">✔</span>
                 <span style="font-size: 16px;">${item.nome}</span>
               </div>
             `).join('')}
           </div>
         </div>
         
-        <div style="margin-top: 30px; text-align: right; padding: 25px; background: #2563eb; color: white; border-radius: 15px;">
+        <div style="margin-top: 30px; text-align: right; padding: 25px; background: #8B221B; color: white; border-radius: 15px;">
           <p style="margin: 0; font-size: 14px; opacity: 0.8;">Valor Total do evento: R$ ${somaItensVenda.toFixed(2)}</p>
-          ${valorDesconto > 0 ? `<p style="margin: 5px 0; font-size: 16px; color: #4ade80; font-weight: bold;">Desconto Especial: - R$ ${valorDesconto.toFixed(2)}</p>` : ''}
+          ${valorDesconto > 0 ? `<p style="margin: 5px 0; font-size: 16px; color: #EBD84B; font-weight: bold;">Desconto Especial: - R$ ${valorDesconto.toFixed(2)}</p>` : ''}
           <span style="font-size: 18px; opacity: 0.9;">Investimento Final do evento:</span>
           <h1 style="margin: 5px 0; font-size: 36px;">R$ ${totalFinalVenda.toFixed(2)}</h1>
         </div>
@@ -278,7 +278,7 @@ export default function App() {
                <TouchableOpacity style={[styles.buttonPDF, { flex: 1, backgroundColor: '#64748b' }]} onPress={() => visualizarPdf('cliente')}>
                  <Text style={styles.buttonText}>Revisar</Text>
                </TouchableOpacity>
-               <TouchableOpacity style={[styles.buttonPDF, { flex: 2, backgroundColor: '#7c3aed' }]} onPress={() => enviarPdf('cliente')}>
+               <TouchableOpacity style={[styles.buttonPDF, { flex: 2, backgroundColor: '#25c509' }]} onPress={() => enviarPdf('cliente')}>
                  <Text style={styles.buttonText}>Enviar Proposta</Text>
                </TouchableOpacity>
             </View>
