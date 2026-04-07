@@ -8,6 +8,7 @@ import {
   StatusBar,
   Modal
 } from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { styles } from './src/styles/styles';
@@ -146,15 +147,48 @@ export default function App() {
     </html>
   `;
 
+  // APAGUE as versões antigas dessas duas funções e cole estas:
+
   const visualizarPdf = async (tipo) => {
-    const html = tipo === 'cliente' ? obterHtmlCliente() : obterHtmlEmpresa();
-    await Print.printAsync({ html });
+    try {
+      const html = tipo === 'cliente' ? obterHtmlCliente() : obterHtmlEmpresa();
+      await Print.printAsync({ html });
+    } catch (error) {
+      console.error("Erro ao visualizar PDF:", error);
+    }
   };
 
   const enviarPdf = async (tipo) => {
-    const html = tipo === 'cliente' ? obterHtmlCliente() : obterHtmlEmpresa();
-    const { uri } = await Print.printToFileAsync({ html });
-    await Sharing.shareAsync(uri);
+    try {
+      const html = tipo === 'cliente' ? obterHtmlCliente() : obterHtmlEmpresa();
+      
+      // 1. Gera o PDF inicial
+      const { uri } = await Print.printToFileAsync({ html });
+
+      // 2. Prepara o nome do arquivo (Remove espaços e usa o nome do cliente)
+      const nomeLimpo = cliente.trim().replace(/\s+/g, '_') || 'Sem_Nome';
+      const sufixo = tipo === 'cliente' ? 'Proposta' : 'Relatorio_Interno';
+      const nomeFinal = `${sufixo}_WK_Eventos_${nomeLimpo}.pdf`;
+      
+      // 3. Define o novo caminho no cache do celular
+      const novoCaminho = `${FileSystem.cacheDirectory}${nomeFinal}`;
+
+      // 4. Move/Renomeia o arquivo
+      await FileSystem.moveAsync({
+        from: uri,
+        to: novoCaminho,
+      });
+
+      // 5. Compartilha o arquivo renomeado
+      await Sharing.shareAsync(novoCaminho, {
+        mimeType: 'application/pdf',
+        dialogTitle: `Enviar ${sufixo}`,
+        UTI: 'com.adobe.pdf',
+      });
+
+    } catch (error) {
+      console.error("Erro ao enviar PDF:", error);
+    }
   };
 
   const salvarItem = () => {
@@ -171,6 +205,7 @@ export default function App() {
     }
     setModalVisivel(false);
   };
+  
 
   return (
     <View style={styles.container}>
