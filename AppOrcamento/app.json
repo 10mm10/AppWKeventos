@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#8B221B"
+        "backgroundColor": "#FFFFFF"
       },
       "package": "com.wkeventos.app",
       "versionCode": 1
