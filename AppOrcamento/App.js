@@ -6,8 +6,7 @@ import {
   TouchableOpacity, 
   ScrollView, 
   StatusBar, 
-  Modal, 
-  Alert 
+  Modal 
 } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -15,6 +14,7 @@ import { styles } from './src/styles/styles';
 import { Asset } from 'expo-asset';
 
 export default function App() {
+  // LOGO LOCAL SOLICITADA
   const logoEmpresa = Asset.fromModule(require('./assets/logo.jpeg')).uri;
 
   const [cliente, setCliente] = useState('');
@@ -32,15 +32,10 @@ export default function App() {
   const totalCusto = itens.reduce((acc, item) => acc + item.custo, 0);
   const lucroTotal = totalVenda - totalCusto;
 
-  // FUNÇÃO DE MÁSCARA DE DATA (00/00/0000)
+  // MÁSCARA DE DATA SOLICITADA
   const formatarData = (text) => {
-    // Remove tudo que não for número
     let cleaned = text.replace(/\D/g, '');
-    
-    // Limita a 8 dígitos
     if (cleaned.length > 8) cleaned = cleaned.substring(0, 8);
-
-    // Aplica a formatação
     if (cleaned.length > 4) {
       return cleaned.replace(/^(\d{2})(\d{2})(\d{4}).*/, '$1/$2/$3');
     } else if (cleaned.length > 2) {
@@ -53,9 +48,7 @@ export default function App() {
     <html>
       <body style="font-family: sans-serif; padding: 20px; color: #1e293b;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-          <div>
-            <h1 style="color: #2563eb; margin: 0;">WK Eventos - Relatório Interno</h1>
-          </div>
+          <h1 style="color: #2563eb; margin: 0;">WK Eventos - Relatório Interno</h1>
           <img src="${logoEmpresa}" style="height: 60px;" />
         </div>
         <p><strong>Cliente:</strong> ${cliente || '---'}</p>
@@ -65,9 +58,9 @@ export default function App() {
           <thead>
             <tr style="background: #2563eb; color: white;">
               <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Item</th>
-              <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Custo</th>
-              <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Venda</th>
-              <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Lucro</th>
+              <th style="padding: 12px; border: 1px solid #ddd;">Custo</th>
+              <th style="padding: 12px; border: 1px solid #ddd;">Venda</th>
+              <th style="padding: 12px; border: 1px solid #ddd;">Lucro</th>
             </tr>
           </thead>
           <tbody>
@@ -101,21 +94,21 @@ export default function App() {
           <p>Abaixo seguem os detalhes da proposta para o evento: <strong>${evento}</strong></p>
           <p>Data prevista: <strong>${dataEvento}</strong></p>
         </div>
-        <div style="margin: 30px 0; border: 1px solid #e2e8f0; border-radius: 15px; overflow: hidden;">
-          <div style="background: #f8fafc; padding: 15px; font-weight: bold; border-bottom: 1px solid #e2e8f0;">Serviços e Equipamentos:</div>
+        <div style="background: #f8fafc; padding: 15px; font-weight: bold; border: 1px solid #e2e8f0; color: #2563eb;">Serviços e Equipamentos:</div>
+        <div style="border: 1px solid #e2e8f0; border-top: none; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
           ${itens.map(item => `
-            <div style="padding: 15px; border-bottom: 1px solid #f1f5f9;">
-              <span style="color: #059669; font-size: 18px;">✔</span>
-              <span style="font-size: 16px; margin-left: 10px;">${item.nome}</span>
+            <div style="display: flex; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+              <span style="color: #059669; font-size: 18px; margin-right: 10px;">✔</span>
+              <span style="font-size: 16px;">${item.nome}</span>
             </div>
           `).join('')}
         </div>
         <div style="margin-top: 50px; text-align: right; padding: 30px; background: #2563eb; color: white; border-radius: 15px;">
-          <span style="font-size: 18px; opacity: 0.9;">Investimento Total:</span>
+          <span style="font-size: 18px; opacity: 0.9;">Investimento Total do evento:</span>
           <h1 style="margin: 5px 0; font-size: 36px;">R$ ${totalVenda.toFixed(2)}</h1>
         </div>
         <p style="text-align: center; margin-top: 80px; font-size: 12px; color: #94a3b8;">WK Eventos | Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
-        <p style="text-align: center; margin-top: 10px; font-size: 12px; color: #94a3b8;">Proposta valida para 30 dias</p>
+        <p style="text-align: center; margin-top: 12px; font-size: 12px; color: #94a3b8;">Proposta valida por 30 dias.</p>
       </body>
     </html>
   `;
