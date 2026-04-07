@@ -15,7 +15,6 @@ import { styles } from './src/styles/styles';
 import { Asset } from 'expo-asset';
 
 export default function App() {
-  // Configuração da logo local conforme solicitado
   const logoEmpresa = Asset.fromModule(require('./assets/logo.jpeg')).uri;
 
   const [cliente, setCliente] = useState('');
@@ -32,6 +31,23 @@ export default function App() {
   const totalVenda = itens.reduce((acc, item) => acc + item.venda, 0);
   const totalCusto = itens.reduce((acc, item) => acc + item.custo, 0);
   const lucroTotal = totalVenda - totalCusto;
+
+  // FUNÇÃO DE MÁSCARA DE DATA (00/00/0000)
+  const formatarData = (text) => {
+    // Remove tudo que não for número
+    let cleaned = text.replace(/\D/g, '');
+    
+    // Limita a 8 dígitos
+    if (cleaned.length > 8) cleaned = cleaned.substring(0, 8);
+
+    // Aplica a formatação
+    if (cleaned.length > 4) {
+      return cleaned.replace(/^(\d{2})(\d{2})(\d{4}).*/, '$1/$2/$3');
+    } else if (cleaned.length > 2) {
+      return cleaned.replace(/^(\d{2})(\d{0,2}).*/, '$1/$2');
+    }
+    return cleaned;
+  };
 
   const obterHtmlEmpresa = () => `
     <html>
@@ -99,6 +115,7 @@ export default function App() {
           <h1 style="margin: 5px 0; font-size: 36px;">R$ ${totalVenda.toFixed(2)}</h1>
         </div>
         <p style="text-align: center; margin-top: 80px; font-size: 12px; color: #94a3b8;">WK Eventos | Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+        <p style="text-align: center; margin-top: 10px; font-size: 12px; color: #94a3b8;">Proposta valida para 30 dias</p>
       </body>
     </html>
   `;
@@ -142,7 +159,14 @@ export default function App() {
         <TextInput style={styles.input} placeholder="Tipo de Evento" value={evento} onChangeText={setEvento} />
 
         <Text style={styles.label}>Data do Evento</Text>
-        <TextInput style={styles.input} placeholder="Ex: 20/12/2024" value={dataEvento} onChangeText={setDataEvento} />
+        <TextInput 
+          style={styles.input} 
+          placeholder="DD/MM/AAAA" 
+          value={dataEvento} 
+          onChangeText={(text) => setDataEvento(formatarData(text))} 
+          keyboardType="numeric"
+          maxLength={10}
+        />
 
         <Text style={styles.sectionTitle}>Itens Adicionados ({itens.length})</Text>
         
