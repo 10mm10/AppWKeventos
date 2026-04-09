@@ -56,35 +56,56 @@ import { Asset } from 'expo-asset';
   <style>
     @page { size: A4; margin: 0; }
     body { 
-      margin: 0; padding: 30px; 
+      margin: 0; padding: 30px 30px 2px 30px; 
       box-sizing: border-box; 
       height: 100vh; 
       display: flex; flex-direction: column; 
       font-family: 'Helvetica', sans-serif; color: #334155;
+      overflow: hidden; /* Impede que o conteúdo "vaze" para a página 2 */
     }
     .header {
       display: flex; justify-content: space-between; align-items: center;
       border-bottom: 3px solid #8B221B; padding-bottom: 10px; margin-bottom: 20px;
     }
-    .main-content { flex: 1; }
+
+    /* Substitua apenas este bloco no seu cssFolhaUnica */
+
+    .main-content { 
+      flex: 1;
+      /* Remova o max-height daqui para o flex:1 trabalhar livre */
+    }
     
-    /* Suporte para duas colunas no cliente se houver muitos itens */
     .tabela-wrapper {
       column-count: ${itens.length > 8 ? 2 : 1};
       column-gap: 20px;
+      column-fill: auto;
+      
+      /* O segredo é ESTA altura fixa: */
+      /* No A4, 650px a 700px é o espaço ideal entre cabeçalho e rodapé */
+      height: 500px; 
     }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; break-inside: avoid; }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 10px; 
+      display: inline-table; /* Mantém para permitir a quebra */
+    }
+
     th { background: #8B221B; color: white; padding: 10px; font-size: 14px; text-transform: uppercase; }
     td { border: 1px solid #e2e8f0; padding: 10px; vertical-align: top; }
     
+    tr { break-inside: avoid; page-break-inside: avoid; }
+    
     .footer-box {
-      margin-top: 20px; padding: 25px; 
+      margin-top: auto; /* Empurra o rodapé para o final da folha */
+      padding: 10px; 
       background: #8B221B; color: white; 
       border-radius: 15px; text-align: right;
     }
-    .tech-info { text-align: center; color: #94a3b8; margin-top: 15px; font-size: 12px; }
-    .logo-img { height: 80px; width: auto; }
+    .tech-info  { text-align: center; color: #94a3b8; margin-top: 5px; font-size: 20px; }
+    .tech-info p { margin-bottom: 0; text-align: center; color: #94a3b8; margin-top: 5px; font-size: 15px; }
+    .logo-img { height: 150px; width: auto; }
   </style>
 `;
 
@@ -149,13 +170,13 @@ import { Asset } from 'expo-asset';
       <div class="header">
         <div>
           <h1 style="color: #8B221B; margin: 0; font-size: 28px;">WK Eventos</h1>
-          <p style="margin: 5px 0; color: #64748b;">Proposta Comercial</p>
+          <p style="margin-bottom: 0; margin: 5px 0; color: #64748b;">Proposta Comercial</p>
         </div>
         <img src="${logoBase64}" class="logo-img" />
       </div>
 
       <div class="main-content">
-        <p style="font-size: 18px;">Prezado(a) <strong>${cliente},</strong> conforme solicitado, segue proposta para o evento <strong>${evento}</strong> Data: <strong>${dataEvento}</strong> às <strong>${horaEvento}</strong>.</p>
+        <p style="font-size: 18px; margin: 0;">Prezado(a) <strong>${cliente},</strong> conforme solicitado, segue proposta para o evento <strong>${evento}</strong> Data: <strong>${dataEvento}</strong> às <strong>${horaEvento}</strong>.</p>
         
         <div class="tabela-wrapper">
           <table>
@@ -169,10 +190,10 @@ import { Asset } from 'expo-asset';
               ${itens.map((item, index) => `
                 <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#fdfaf9'};">
                   <td>
-                    <div style="font-weight: bold; font-size: 16px; color: #211E1D;">
+                    <div style="font-weight: bold; font-size: 18px; color: #211E1D;">
                       <span style="color: #EBD84B;">✔</span> ${item.nome}
                     </div>
-                    ${item.insumos ? `<div style="font-size: 13px; color: #4a5667; margin-left: 22px; font-style: italic;">${item.insumos}</div>` : ''}
+                    ${item.insumos ? `<div style="font-size: 15px; color: #4a5667; margin-left: 22px; font-style: italic;">${item.insumos}</div>` : ''}
                   </td>
                   <td style="text-align: right; font-weight: bold; font-size: 15px;">R$ ${item.venda.toFixed(2)}</td>
                 </tr>
@@ -192,8 +213,8 @@ import { Asset } from 'expo-asset';
       </div>
 
       <div class="tech-info">
-        WK Eventos | Válido por 30 dias | Gerado em ${new Date().toLocaleDateString('pt-BR')}<br/>
-        <strong>TECNOLOGIA: MM10Sistemas | (41) 99761-8970</strong>
+        <strong>WK Eventos | Válido por 30 dias | Gerado em ${new Date().toLocaleDateString('pt-BR')}</strong><br/>
+        <p>TECNOLOGIA: MM10Sistemas | (41) 99761-8970</p>
       </div>
     </body>
   </html>
@@ -210,9 +231,9 @@ import { Asset } from 'expo-asset';
     try {
       const html = tipo === 'cliente' ? obterHtmlCliente() : obterHtmlEmpresa();
       const { uri } = await Print.printToFileAsync({ html });
-      const nomeLimpo = cliente.trim().replace(/\s+/g, '_') || 'Sem_Nome';
+      const nomeLimpo = cliente.trim().replace(/\s+/g, '_');
       const sufixo = tipo === 'cliente' ? 'Proposta' : 'Relatorio_Interno';
-      const nomeFinal = `${sufixo}_WK_Eventos_${nomeLimpo}.pdf`;
+      const nomeFinal = `${sufixo}_WK_Eventos.pdf`;
       const novoCaminho = `${FileSystem.cacheDirectory}${nomeFinal}`;
       await FileSystem.moveAsync({ from: uri, to: novoCaminho });
       await Sharing.shareAsync(novoCaminho);
