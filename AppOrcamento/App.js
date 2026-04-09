@@ -56,142 +56,145 @@ import { Asset } from 'expo-asset';
   <style>
     @page { size: A4; margin: 0; }
     body { 
-      margin: 0; 
-      padding: 20px; 
+      margin: 0; padding: 30px; 
       box-sizing: border-box; 
-      height: 100vh; /* Ocupa exatamente uma folha */
-      display: flex; 
-      flex-direction: column; 
-      font-family: sans-serif; 
-      color: #334155; 
+      height: 100vh; 
+      display: flex; flex-direction: column; 
+      font-family: 'Helvetica', sans-serif; color: #334155;
     }
-    .conteudo-principal { 
-      flex: 1; 
-      /* Isso aqui impede que a tabela empurre o rodapé para fora da folha */
-      display: flex;
-      flex-direction: column;
-      overflow: hidden; 
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 3px solid #8B221B; padding-bottom: 10px; margin-bottom: 20px;
     }
-    table { 
-      width: 100%; 
-      border-collapse: collapse; 
-      margin-top: 10px;
-    }
-    /* Impede que o navegador quebre a página no meio de um item */
-    tr { page-break-inside: avoid; break-inside: avoid; }
+    .main-content { flex: 1; }
     
-    .logo-img { height: 90px; width: auto; }
+    /* Suporte para duas colunas no cliente se houver muitos itens */
+    .tabela-wrapper {
+      column-count: ${itens.length > 8 ? 2 : 1};
+      column-gap: 20px;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; break-inside: avoid; }
+    th { background: #8B221B; color: white; padding: 10px; font-size: 14px; text-transform: uppercase; }
+    td { border: 1px solid #e2e8f0; padding: 10px; vertical-align: top; }
+    
+    .footer-box {
+      margin-top: 20px; padding: 25px; 
+      background: #8B221B; color: white; 
+      border-radius: 15px; text-align: right;
+    }
+    .tech-info { text-align: center; color: #94a3b8; margin-top: 15px; font-size: 12px; }
+    .logo-img { height: 80px; width: auto; }
   </style>
 `;
-  // Função para gerar o texto descritivo dos itens
-const gerarResumoItens = () => {
-  if (itens.length === 0) return "Nenhum item adicionado.";
-  
-  return itens.map(item => {
-    const base = `<strong>${item.nome}</strong>`;
-    const detalhes = item.insumos ? ` (${item.insumos})` : "";
-    return base + detalhes;
-  }).join(", ") + ".";
-};
+
 
   const obterHtmlEmpresa = () => `
-    <html>
-      <head>${cssFolhaUnica}</head>
-      <body>
-        <div class="conteudo-principal">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8B221B; padding-bottom: 10px;">
-            <h1 style="color: #8B221B; margin: 0;">WK Eventos - Relatório Interno</h1>
-            <img src="${logoBase64}" style="height: 90px;" />
-          </div>
-          <p>Cliente:<strong> ${cliente || '---'}</strong> Evento: <strong>${evento || '---'}</strong> Data: <strong>${dataEvento || '---'} </strong> às <strong>${horaEvento || '---'}</strong></p>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 1px;">
-            <thead>
-              <tr style="background: #8B221B; color: white;">
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Item / Insumos</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Custo</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Venda Bruta</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Lucro Unit.</th>
+  <html>
+    <head>${cssFolhaUnica}</head>
+    <body>
+      <div class="header">
+        <div>
+          <h1 style="color: #8B221B; margin: 0; font-size: 24px;">Relatório Interno</h1>
+          <p style="margin: 5px 0; color: #64748b;">Gestão de Custos e Margens</p>
+        </div>
+        <img src="${logoBase64}" class="logo-img" />
+      </div>
+
+      <div class="main-content">
+        <p>Cliente: <strong>${cliente || '---'}</strong> | Evento: <strong>${evento || '---'}</strong> | Data: <strong>${dataEvento}</strong> às <strong>${horaEvento}</strong></p>
+        <p></p>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">Itens / Insumos</th>
+              <th>Custo</th>
+              <th>Venda</th>
+              <th>Lucro</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itens.map((item, index) => `
+              <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+                <td>
+                  <div style="margin-top: 1px; padding: 1px; font-weight: bold; font-size: 18px;">${item.nome}</div>
+                  <div style="font-size: 15px; color: #64748b; font-style: italic;">${item.insumos || ''}</div>
+                </td>
+                <td style="text-align: center;">R$ ${item.custo.toFixed(2)}</td>
+                <td style="text-align: center;">R$ ${item.venda.toFixed(2)}</td>
+                <td style="text-align: center; font-weight: bold; color: #059669;">R$ ${(item.venda - item.custo).toFixed(2)}</td>
               </tr>
-            </thead>
-            <tbody>
-              ${itens.map((item, index) => `
-                <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#fdfaf9'};">
-                  <td style="padding: 10px; border: 1px solid #ddd;">
-                    <div style="font-weight: bold;">${item.nome}</div>
-                    <div class="insumos-lista"> ${item.insumos || 'Nenhum detalhe'}</div>
-                  </td>
-                  <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.custo.toFixed(2)}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.venda.toFixed(2)}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-weight: bold; color: #059669;">${(item.venda - item.custo).toFixed(2)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer-box" style="background: #334155;"> <p style="margin: 0; opacity: 0.8;">Venda Bruta: R$ ${somaItensVenda.toFixed(2)}</p>
+        <p style="margin: 5px 0; color: #fbbf24;">Descontos: - R$ ${valorDesconto.toFixed(2)}</p>
+        <div style="border-top: 1px solid rgba(255,255,255,0.2); margin: 10px 0; padding-top: 10px;">
+          <span style="font-size: 16px;">Lucro Líquido Final:</span>
+          <h1 style="margin: 0; font-size: 32px; color: #34d399;">R$ ${lucroTotal.toFixed(2)}</h1>
         </div>
-        <div style="margin-top: 20px; padding: 20px; background: #f1f5f9; border-radius: 10px;">
-          <p style="margin: 5px 0;">Subtotal: R$ ${somaItensVenda.toFixed(2)}</p>
-          <p style="margin: 5px 0; color: #ef4444;">Desconto Aplicado: - R$ ${valorDesconto.toFixed(2)}</p>
-          <p style="font-size: 18px; margin: 5px 0;"><strong>Total Final (Venda):</strong> R$ ${totalFinalVenda.toFixed(2)}</p>
-          <p style="font-size: 18px; margin: 5px 0; color: #8B221B;"><strong>Meu Lucro Líquido:</strong> R$ ${lucroTotal.toFixed(2)}</p>
-        </div>
-      </body>
-    </html>
-  `;
+      </div>
+      <div class="tech-info">Gerado internamente via MM10Sistemas</div>
+    </body>
+  </html>
+`;
 
   const obterHtmlCliente = () => `
   <html>
     <head>${cssFolhaUnica}</head>
-    <body style="font-family: sans-serif; padding: 40px; color: #334155;">
-      <div class="conteudo-principal">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #8B221B; padding-bottom: 10px;">
-          <h1 style="color: #8B221B; margin: 10px;">WK Eventos</h1>
-          <img src="${logoBase64}" class="logo-img" />
+    <body>
+      <div class="header">
+        <div>
+          <h1 style="color: #8B221B; margin: 0; font-size: 28px;">WK Eventos</h1>
+          <p style="margin: 5px 0; color: #64748b;">Proposta Comercial</p>
         </div>
+        <img src="${logoBase64}" class="logo-img" />
+      </div>
 
-        <div style="margin-top: 1px; margin-bottom: 1px;">
-          <p style="font-size: 18px;">Prezado(a) <strong>${cliente},</strong> segue proposta para o evento: <strong>${evento}</strong> Data prevista: <strong>${dataEvento}</strong> às <strong>${horaEvento}</strong></p>
-        </div>
-
+      <div class="main-content">
+        <p style="font-size: 18px;">Prezado(a) <strong>${cliente},</strong> conforme solicitado, segue proposta para o evento <strong>${evento}</strong> Data: <strong>${dataEvento}</strong> às <strong>${horaEvento}</strong>.</p>
+        
         <div class="tabela-wrapper">
-          <table style="width: 100%; border-collapse: collapse;">
+          <table>
             <thead>
-              <tr style="background: #8B221B; color: white;">
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Descrição dos produtos e serviços inclusos na proposta</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: right; width: 100px;">Valor</th>
+              <tr>
+                <th style="text-align: left;">Descrição dos Serviços</th>
+                <th style="text-align: right;">Investimento</th>
               </tr>
             </thead>
             <tbody>
               ${itens.map((item, index) => `
                 <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#fdfaf9'};">
-                  <td style="padding: 5px; border: 1px solid #ddd;">
-                    <div style="font-weight: bold; font-size: 20px; color: #211E1D;">
+                  <td>
+                    <div style="font-weight: bold; font-size: 16px; color: #211E1D;">
                       <span style="color: #EBD84B;">✔</span> ${item.nome}
                     </div>
-                    ${item.insumos ? `<div style="font-size: 15px; color: #4a5667; margin-left: 20px; font-style: italic;">${item.insumos}</div>` : ''}
+                    ${item.insumos ? `<div style="font-size: 13px; color: #4a5667; margin-left: 22px; font-style: italic;">${item.insumos}</div>` : ''}
                   </td>
-                  <td style="padding: 8px; border: 1px solid #ddd; text-align: right; font-weight: bold; font-size: 16px;">
-                    R$ ${item.venda.toFixed(2)}
-                  </td>
+                  <td style="text-align: right; font-weight: bold; font-size: 15px;">R$ ${item.venda.toFixed(2)}</td>
                 </tr>
               `).join('')}
             </tbody>
           </table>
         </div>
       </div>
-      
-      <div style="margin-top: 20px; text-align: right; padding: 20px; background: #8B221B; color: white; border-radius: 15px;">
-        <p style="margin: 0; font-size: 14px; opacity: 0.8;">Subtotal: R$ ${somaItensVenda.toFixed(2)}</p>
-        ${valorDesconto > 0 ? `<p style="margin: 5px 0; font-size: 16px; color: #EBD84B; font-weight: bold;">Desconto Especial: - R$ ${valorDesconto.toFixed(2)}</p>` : ''}
-        <span style="font-size: 18px; opacity: 0.9;">Investimento Final:</span>
-        <h1 style="margin: 5px 0; font-size: 32px;">R$ ${totalFinalVenda.toFixed(2)}</h1>
+
+      <div class="footer-box">
+        <p style="margin: 0; opacity: 0.8; font-size: 14px;">Subtotal: R$ ${somaItensVenda.toFixed(2)}</p>
+        ${valorDesconto > 0 ? `<p style="margin: 5px 0; font-size: 16px; color: #EBD84B; font-weight: bold;">Bonificação/Desconto: - R$ ${valorDesconto.toFixed(2)}</p>` : ''}
+        <div style="border-top: 1px solid rgba(255,255,255,0.2); margin: 10px 0; padding-top: 10px;">
+          <span style="font-size: 18px;">Investimento Final:</span>
+          <h1 style="margin: 0; font-size: 36px;">R$ ${totalFinalVenda.toFixed(2)}</h1>
+        </div>
       </div>
 
-      <p style="text-align: center; margin-top: 1px; font-size: 20px; color: #94a3b8; margin-bottom: 0;">
-        WK Eventos | Gerado em ${new Date().toLocaleDateString('pt-BR')} | Válido por 30 dias.
-      </p>
-      <p style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 2px;">
-        TECNOLOGIA: MM10Sistemas | (41) 99761-8970
-      </p>
+      <div class="tech-info">
+        WK Eventos | Válido por 30 dias | Gerado em ${new Date().toLocaleDateString('pt-BR')}<br/>
+        <strong>TECNOLOGIA: MM10Sistemas | (41) 99761-8970</strong>
+      </div>
     </body>
   </html>
 `;
